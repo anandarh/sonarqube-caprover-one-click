@@ -1,0 +1,55 @@
+captainVersion: 4
+services:
+    $$cap_appname:
+        image: anandarh/sonar-flutter:7.7
+        depends_on:
+            - $$cap_appname-db
+        environment:
+            SONAR_JDBC_URL: jdbc:postgresql://srv-captain--sonarqube-db/sonar
+            SONAR_JDBC_USERNAME: sonar
+            SONAR_JDBC_PASSWORD: $$cap_db_pass
+        caproverExtra:
+            containerHttpPort: '9000'
+    $$cap_appname-db:
+        image: postgres:$$cap_database_version
+        environment:
+            POSTGRES_USER: sonar
+            POSTGRES_PASSWORD: $$cap_db_pass
+        caproverExtra:
+            notExposeAsWebApp: 'true'
+caproverOneClickApp:
+    variables:
+        - id: $$cap_db_pass
+          label: Database password
+          description: ''
+          validRegex: /.{1,}/
+        - id: $$cap_database_version
+          label: Postgres Version, default is 13.0
+          defaultValue: '9.6'
+          description: Check out the Docker pages for the valid tags https://hub.docker.com/_/postgres?tab=tags
+          validRegex: /^([^\s^\/])+$/
+    instructions:
+        start: >-
+            SonarQube is an open source product for continuous inspection of code quality.
+
+            This Docker image contains the Community Edition of SonarQube with an additional plugin to enable analysis of Dart and Flutter projects.  
+
+
+            Enter your Sonarqube Configuration parameters and click on next.
+
+            More information: https://hub.docker.com/r/anandarh/sonar-flutter
+
+
+            Default username: admin
+
+            Default password: admin
+
+
+            It will take about a minute for the process to finish.
+        end: >
+            SonarQube is deployed and available as $$cap_appname . 
+             IMPORTANT: It will take up to 2 minutes to be ready.
+    displayName: SonarFlutter
+    isOfficial: true
+    description: SonarFlutter is a Sonarqube with an additional plugin to enable analysis of Dart and Flutter projects.
+    documentation: Taken from https://hub.docker.com/r/anandarh/sonar-flutter
